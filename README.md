@@ -1,6 +1,6 @@
 # VQE-FSM
 
-VQE-FSM is a Python project implementing different Variational Quantum Eigensolver (VQE) workflows to apply functional software measurement techniques. It includes two implementations of the same H2 example: one built directly around a Qiskit VQE subroutine and one that uses a manual optimization loop over a VQE cost function.
+VQE-FSM is a Python project implementing different Variational Quantum Eigensolver (VQE) workflows to apply functional software measurement techniques. It includes three implementations of the same H2 example: one built directly using a Qiskit VQE subroutine from the `qiskit.algorithms` module, one that uses helper functions to construct the optimization component by blocks, and one that builds the entire optimization workflow in just one method.
 
 ## Installation
 
@@ -20,7 +20,7 @@ uv run python src/main.py
 
 ## Usage
 
-Run the main entry point to execute both VQE variants and print their results:
+Run the main entry point to execute all three VQE variants and print their results:
 
 ```bash
 uv run python src/main.py
