@@ -57,8 +57,8 @@ def _cost_function(params, ansatz, hamiltonian, estimator)->float:
         float: Estimated energy for the supplied parameters.
     """
 
-    published_estimate = (ansatz, [hamiltonian], [params],)
-    result = estimator.run(pubs=[published_estimate],).result()
+    pub_estimate = (ansatz, [hamiltonian], [params],)
+    result = estimator.run(pubs=[pub_estimate],).result()
     energy = result[0].data.evs[0]
 
     return energy
@@ -142,6 +142,7 @@ def vqe_circuit_builder() -> QuantumCircuit:
         x0=x0,
         args=(ansatz, hamiltonian, estimator,),
         method="SLSQP",
+        options={"maxiter": 1000},
     )
 
     return result
