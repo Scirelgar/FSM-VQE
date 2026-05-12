@@ -101,13 +101,13 @@ def _x0_parameters(n_qubits)->np.ndarray:
     return params
 
 def vqe_subroutine():
-    """Run the Qiskit VQE algorithm for the built-in H2 Hamiltonian.
+    """Run the Qiskit VQE algorithm for the built-in H2 Hamiltonian using the ``qiskit_algorithms`` module.
 
     Note:
         ``qiskit_algorithms`` is no longer officially supported.
 
     Returns:
-        qiskit_algorithms.minimum_eigensolvers.MinimumEigensolverResult: The computed minimum-eigenvalue result.
+        VQEResult: The computed minimum-eigenvalue result.
 
     Example:
         >>> result = vqe_subroutine()
