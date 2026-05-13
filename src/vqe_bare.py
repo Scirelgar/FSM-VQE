@@ -1,11 +1,8 @@
 import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.circuit import QuantumRegister, ClassicalRegister, Parameter
-from qiskit.circuit.library import n_local
+from qiskit.circuit import Parameter
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.primitives import StatevectorEstimator
-from qiskit.visualization import circuit_drawer
-from matplotlib import pyplot as plt
 from scipy.optimize import minimize
 
 SEED = 156
@@ -20,27 +17,42 @@ def vqe_bare():
     # Define circuit and parameters objects
     qc = QuantumCircuit(1)
 
-    params = [Parameter("theta"), Parameter("phi"),]
-    
+    params = [
+        Parameter("theta"),
+        Parameter("phi"),
+    ]
+
     # Build the ansatz
     qc.rx(params[0], 0)
     qc.rz(params[1], 0)
 
     # Build the Hamiltonian
     hamiltonian = SparsePauliOp.from_list(
-        [("I", -1.04886087), ("Z", -0.7967368), ("X", 0.18121804),]
+        [
+            ("I", -1.04886087),
+            ("Z", -0.7967368),
+            ("X", 0.18121804),
+        ]
     )
 
     # Set up the estimator
     estimator = StatevectorEstimator(seed=SEED)
 
     # Define the cost function for optimization
-    def cost_function(params, ansatz=qc, hamiltonian=hamiltonian, estimator=estimator)->float:
-        pub_estimate = (qc, [hamiltonian], [params],)
-        result = estimator.run(pubs=[pub_estimate],).result()
+    def cost_function(
+        params, ansatz=qc, hamiltonian=hamiltonian, estimator=estimator
+    ) -> float:
+        pub_estimate = (
+            qc,
+            [hamiltonian],
+            [params],
+        )
+        result = estimator.run(
+            pubs=[pub_estimate],
+        ).result()
         energy = result[0].data.evs[0]
         return energy
-    
+
     # Run the optimization
     initial_params = np.random.RandomState(seed=SEED).rand(len(params))
 
@@ -53,4 +65,3 @@ def vqe_bare():
     )
 
     return optimization_result
-

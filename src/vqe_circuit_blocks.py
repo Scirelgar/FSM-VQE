@@ -1,29 +1,29 @@
 import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.circuit import QuantumRegister, ClassicalRegister, Parameter
-from qiskit.circuit.library import n_local, hamiltonian_variational_ansatz
+from qiskit.circuit import Parameter
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.primitives import StatevectorEstimator
-from qiskit.visualization import circuit_drawer
-from matplotlib import pyplot as plt
 from scipy.optimize import minimize
-
 
 
 SEED = 156
 
-def _h2_1qubit_hamiltonian_stog6g_redux()->list[tuple[str, float]]:
+
+def _h2_1qubit_hamiltonian_stog6g_redux() -> list[tuple[str, float]]:
     """Return the 1-qubit H2 Hamiltonian in the STO-6G basis.
 
     Returns:
         list[tuple[str, float]]: Pauli operators and coefficients for the reduced Hamiltonian.
     """
 
-    return [("I", -1.04886087), ("Z", -0.7967368), ("X", 0.18121804),]
+    return [
+        ("I", -1.04886087),
+        ("Z", -0.7967368),
+        ("X", 0.18121804),
+    ]
 
 
-
-def _build_hamiltonian_from_op_list(name="h2")->SparsePauliOp:
+def _build_hamiltonian_from_op_list(name="h2") -> SparsePauliOp:
     """Build a molecular Hamiltonian from a hard-coded operator list.
 
     Args:
@@ -37,14 +37,13 @@ def _build_hamiltonian_from_op_list(name="h2")->SparsePauliOp:
     """
 
     if name == "h2":
-        return SparsePauliOp.from_list(
-            _h2_1qubit_hamiltonian_stog6g_redux()
-            )
-    
+        return SparsePauliOp.from_list(_h2_1qubit_hamiltonian_stog6g_redux())
+
     else:
         raise ValueError(f"Hamiltonian for molecule {name} not implemented.")
 
-def _cost_function(params, ansatz, hamiltonian, estimator)->float:
+
+def _cost_function(params, ansatz, hamiltonian, estimator) -> float:
     """Evaluate the estimated energy for a parameter vector.
 
     Args:
@@ -57,31 +56,20 @@ def _cost_function(params, ansatz, hamiltonian, estimator)->float:
         float: Estimated energy for the supplied parameters.
     """
 
-    pub_estimate = (ansatz, [hamiltonian], [params],)
-    result = estimator.run(pubs=[pub_estimate],).result()
+    pub_estimate = (
+        ansatz,
+        [hamiltonian],
+        [params],
+    )
+    result = estimator.run(
+        pubs=[pub_estimate],
+    ).result()
     energy = result[0].data.evs[0]
 
     return energy
 
-def _build_n_local_ansatz(n_qubits)->QuantumCircuit:
-    """Build an ``n_local`` ansatz for the requested number of qubits.
 
-    Args:
-        n_qubits: Number of qubits in the ansatz.
-
-    Returns:
-        QuantumCircuit: Parameterized ansatz circuit.
-    """
-
-    return n_local(
-        num_qubits=n_qubits,
-        rotation_blocks=["rx", "rz",],
-        entanglement_blocks="cx",
-        entanglement="linear",
-        reps=1,
-    )
-
-def _build_1qubit_local_ansatz()->QuantumCircuit:
+def _build_1qubit_local_ansatz() -> QuantumCircuit:
     """Build a 1-qubit local ansatz.
 
     Returns:
@@ -94,21 +82,7 @@ def _build_1qubit_local_ansatz()->QuantumCircuit:
     return ansatz
 
 
-def _build_hamiltonian_variational_ansatz(hamiltonian: SparsePauliOp)->QuantumCircuit:
-    """Build a Hamiltonian variational ansatz.
-
-    Args:
-        hamiltonian: Operator used to generate the variational circuit.
-
-    Returns:
-        QuantumCircuit: Hamiltonian variational ansatz circuit.
-    """
-
-    return hamiltonian_variational_ansatz(
-        hamiltonian=hamiltonian,
-    )
-
-def _x0_parameters(n_qubits)->np.ndarray:
+def _x0_parameters(n_qubits) -> np.ndarray:
     """Generate deterministic initial parameters for the optimizer.
 
     Args:
@@ -140,7 +114,11 @@ def vqe_circuit_builder() -> QuantumCircuit:
     result = minimize(
         _cost_function,
         x0=x0,
-        args=(ansatz, hamiltonian, estimator,),
+        args=(
+            ansatz,
+            hamiltonian,
+            estimator,
+        ),
         method="SLSQP",
         options={"maxiter": 1000},
     )
