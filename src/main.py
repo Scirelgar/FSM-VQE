@@ -21,9 +21,12 @@ def main(hamiltonian: Hamiltonian = Hamiltonian.H2_STO6G_REDUX):
     print(vqe_result)
     vqe_result = vqe_circuit_builder(hamiltonian.value)
     print(vqe_result)
-    vqe_result = vqe_bare(hamiltonian.value)
+    vqe_result = vqe_bare(hamiltonian.value) # Data movement with vqe_bare(): +1 Entry for OptimizeResult, +1 Exit Hamiltonian, +1 Exit triggering vqe_bare()
     print(vqe_result)
 
 
 if __name__ == "__main__":
-    main()
+    main() # Data movement with System (launch of main.py): +1 Triggering Entry
+
+
+# Total for FU main() = 4 CFPs
