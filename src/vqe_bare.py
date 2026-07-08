@@ -7,11 +7,10 @@ from scipy.optimize import minimize, OptimizeResult
 
 SEED = 156
 
-"""
-FP vqe_bare
 
-"""
-def vqe_bare(input_hamiltonian: SparsePauliOp) -> OptimizeResult: # +1 Triggering Entry, +1 Entry for the argument
+def vqe_bare(
+    input_hamiltonian: SparsePauliOp,
+) -> OptimizeResult:  # +1 Triggering Entry, +1 Entry for the argument
     """Run a VQE optimization using only the most basic Qiskit components.
 
     Args:
@@ -49,7 +48,7 @@ def vqe_bare(input_hamiltonian: SparsePauliOp) -> OptimizeResult: # +1 Triggerin
     # Build the ansatz
     qc.rx(params[0], 0)
     qc.rz(params[1], 0)
-   
+
     """
     FP vqe_bare (classical) : +2 Exits trig. each gates, +4 Exits for arguments
 
@@ -61,13 +60,11 @@ def vqe_bare(input_hamiltonian: SparsePauliOp) -> OptimizeResult: # +1 Triggerin
     
     """
 
-    qc.draw("mpl")  # PIN
-
     # Build the Hamiltonian
     hamiltonian = input_hamiltonian
 
     # Set up the estimator
-    estimator = StatevectorEstimator(seed=SEED) #__init__()
+    estimator = StatevectorEstimator(seed=SEED)  # __init__()
 
     """
     FP vqe_bare (classical) : +1 Exit (trigger), +1 Entry (object)
@@ -76,7 +73,7 @@ def vqe_bare(input_hamiltonian: SparsePauliOp) -> OptimizeResult: # +1 Triggerin
     """
 
     # Define the cost function for optimization
-    def cost_function(  # 1 Trig ENTRY + 4 ENTRIES for arg
+    def cost_function(
         params, ansatz=qc, hamiltonian=hamiltonian, estimator=estimator
     ) -> float:
 
@@ -87,11 +84,21 @@ def vqe_bare(input_hamiltonian: SparsePauliOp) -> OptimizeResult: # +1 Triggerin
         )
 
         # This is where quantum execution happens (could be extracted)
-        result = estimator.run(  # 1 EXIT method call QC
-            pubs=[pub_estimate],  # 1 EXIT tuple arg CL or QC?
-        ).result()  # 1 EXIT CL
-        energy = result[0].data.evs[0]  # PIN (HOW MANY ENTRIES)
-        return energy  # 1 EXIT to whoever called
+        result = estimator.run(
+            pubs=[pub_estimate],
+        ).result()
+        """
+        FP cost_function (quantum) : + 1 Exit (trigger), +1 Exit for argument, +1 Entry for PrimitiveJob
+
+        FP statevector_estimator.run() (quantum) : +1 Triggering Entry, +1 Entry for argument, +1 Exit for PrimitiveJob
+        --------------------------------------------------------
+        FP cost_function (quantum) : +1 Exit (trigger), +1 Entry for PrimitiveResult
+
+        FP PrimitiveJob.result() (quantum) : +1 Triggering Entry, +1 Exit for PrimitiveResult        
+        """
+
+        energy = result[0].data.evs[0]
+        return energy
 
     # Run the optimization
     initial_params = np.random.RandomState(seed=SEED).rand(len(params))
@@ -104,16 +111,16 @@ def vqe_bare(input_hamiltonian: SparsePauliOp) -> OptimizeResult: # +1 Triggerin
     """
 
     optimization_result = minimize(
-        cost_function, 
-        x0=initial_params, 
-        args=(qc), 
-        method="SLSQP", 
-        options={"maxiter": 1000}, 
+        cost_function,
+        x0=initial_params,
+        args=(qc),
+        method="SLSQP",
+        options={"maxiter": 1000},
     )
     """
     FP vqe_bare (classical) : +1 Exit (trigger), +5 Exits for arguments, +1 Entry for OptimizeResult
 
-    FP minimize (classical) : 
+    FP minimize (classical) : + 1 Triggering Entry, +5 Entries for arguments, +1 Exit for OptimizeResult
     
     """
 
