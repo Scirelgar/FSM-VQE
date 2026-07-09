@@ -1,4 +1,4 @@
-import numpy as np
+from numpy.random import RandomState
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.quantum_info import SparsePauliOp
@@ -8,7 +8,7 @@ from scipy.optimize import minimize, OptimizeResult
 SEED = 156
 
 
-def vqe_bare(
+def vqe(
     input_hamiltonian: SparsePauliOp,
 ) -> OptimizeResult:  # +1 Triggering Entry, +1 Entry for the argument
     """Run a VQE optimization using only the most basic Qiskit components.
@@ -21,14 +21,12 @@ def vqe_bare(
 
     Example:
         >>> from hamiltonian import Hamiltonian
-        >>> result = vqe_bare(Hamiltonian.H2_STO6G_REDUX.value)
+        >>> result = vqe(Hamiltonian.H2_STO6G_REDUX.value)
     """
     # Define circuit and parameters objects
     qc = QuantumCircuit(1)
     """
-    FP vqe_bare (classical) : +1 Exit, +1 Exit for the parameter, +1 Entry for the object QuantumCircuit
-
-
+    FU vqe (classical)
     FP Quantum Circuit (quantum) : +1 Triggering Entry, +1 Entry for the argument, +1 Exit for the object QuantumCircuit
     
     """
@@ -38,11 +36,8 @@ def vqe_bare(
         Parameter("phi"),
     ]
     """
-    FP vqe_bare (classical) : +2 Exit  Parameter (trigger+argument), +1 Entry  Parameter coming back
-
-    FP params (quantum) : +1 Triggering Entry coming from vqe_bare , +1 Entry for arguments , +1 Exits going back to vqe_bare 
-    
-    Total of exchange : 6
+    FU vqe (classical)
+    FP params (quantum) : +1 Triggering Entry coming from vqe, +1 Entry for arguments, +1 Exits going back to vqe 
     """
 
     # Build the ansatz
@@ -50,14 +45,12 @@ def vqe_bare(
     qc.rz(params[1], 0)
 
     """
-    FP vqe_bare (classical) : +2 Exits trig. each gates, +4 Exits for arguments
-
+    FU vqe (classical)
+    FU QuantumCircuit (quantum) : +2 Entries (one for each gates)
     FP RX (quantum) : +2 Entries for arguments, +1 Triggering Entry, +1 Exit towards qc
 
     FP RZ (quantum) : +2 Entries for argument, +1 Triggering Entry, +1 Exit towards qc
 
-    FP QuantumCircuit (quantum) : +2 Entries (one for each gates)
-    
     """
 
     # Build the Hamiltonian
@@ -67,8 +60,7 @@ def vqe_bare(
     estimator = StatevectorEstimator(seed=SEED)  # __init__()
 
     """
-    FP vqe_bare (classical) : +1 Exit (trigger), +1 Entry (object)
-
+    FU vqe (classical)
     FP StatevectorEstimator (quantum) : +1 triggering Entry, +1 Exit (object)
     """
 
@@ -88,12 +80,12 @@ def vqe_bare(
             pubs=[pub_estimate],
         ).result()
         """
-        FP cost_function (quantum) : + 1 Exit (trigger), +1 Exit for argument, +1 Entry for PrimitiveJob
-
+        FU cost_function (classical)
         FP statevector_estimator.run() (quantum) : +1 Triggering Entry, +1 Entry for argument, +1 Exit for PrimitiveJob
-        --------------------------------------------------------
-        FP cost_function (quantum) : +1 Exit (trigger), +1 Entry for PrimitiveResult
 
+        --------------------------------------------------------
+        
+        FU cost_function (classical)
         FP PrimitiveJob.result() (quantum) : +1 Triggering Entry, +1 Exit for PrimitiveResult        
         """
 
@@ -101,11 +93,11 @@ def vqe_bare(
         return energy
 
     # Run the optimization
-    initial_params = np.random.RandomState(seed=SEED).rand(len(params))
+    initial_params = RandomState(seed=SEED).rand(len(params))
     """
-    FP vqe_bare : +1 Exit (trigger), +2 Exit for arguments, +2 Entries for values of parameters
+    FU vqe
 
-    FP np.rand() (quantum) : +1 Triggering Entry, +2 Entries for arguments, +2 Exits for values of parameters
+    FP RandomState.rand() (quantum) : +1 Triggering Entry, +2 Entries for arguments, +2 Exits for values of parameters
 
     Total : 5
     """
@@ -118,10 +110,8 @@ def vqe_bare(
         options={"maxiter": 1000},
     )
     """
-    FP vqe_bare (classical) : +1 Exit (trigger), +5 Exits for arguments, +1 Entry for OptimizeResult
-
+    FU vqe (classical)
     FP minimize (classical) : + 1 Triggering Entry, +5 Entries for arguments, +1 Exit for OptimizeResult
-    
     """
 
-    return optimization_result  # 1 EXIT of vqe_bare()
+    return optimization_result  # 1 EXIT of vqe()
