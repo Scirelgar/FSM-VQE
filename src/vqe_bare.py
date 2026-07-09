@@ -1,4 +1,4 @@
-import numpy as np
+from numpy.random import RandomState
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.quantum_info import SparsePauliOp
@@ -8,7 +8,9 @@ from scipy.optimize import minimize, OptimizeResult
 SEED = 156
 
 
-def vqe_bare(input_hamiltonian: SparsePauliOp) -> OptimizeResult:
+def vqe(
+    input_hamiltonian: SparsePauliOp,
+) -> OptimizeResult:  # +1 Triggering Entry, +1 Entry for the argument
     """Run a VQE optimization using only the most basic Qiskit components.
 
     Args:
@@ -19,30 +21,51 @@ def vqe_bare(input_hamiltonian: SparsePauliOp) -> OptimizeResult:
 
     Example:
         >>> from hamiltonian import Hamiltonian
-        >>> result = vqe_bare(Hamiltonian.H2_STO6G_REDUX.value)
+        >>> result = vqe(Hamiltonian.H2_STO6G_REDUX.value)
     """
     # Define circuit and parameters objects
-    qc = QuantumCircuit(1)  # 1 EXIT __init__() + 1 EXIT for arg
+    qc = QuantumCircuit(1)
+    """
+    FU vqe (classical)
+    FP Quantum Circuit (quantum) : +1 Triggering Entry, +1 Entry for the argument, +1 Exit for the object QuantumCircuit
+    
+    """
 
     params = [
         Parameter("theta"),
         Parameter("phi"),
     ]
+    """
+    FU vqe (classical)
+    FP params (quantum) : +1 Triggering Entry coming from vqe, +1 Entry for arguments, +1 Exits going back to vqe 
+    """
 
     # Build the ansatz
     qc.rx(params[0], 0)
     qc.rz(params[1], 0)
 
-    qc.draw("mpl")  # PIN
+    """
+    FU vqe (classical)
+    FU QuantumCircuit (quantum) : +2 Entries (one for each gates)
+    FP RX (quantum) : +2 Entries for arguments, +1 Triggering Entry, +1 Exit towards qc
+
+    FP RZ (quantum) : +2 Entries for argument, +1 Triggering Entry, +1 Exit towards qc
+
+    """
 
     # Build the Hamiltonian
     hamiltonian = input_hamiltonian
 
     # Set up the estimator
-    estimator = StatevectorEstimator(seed=SEED)  # 1 EXIT __init__() + 1 EXIT arg
+    estimator = StatevectorEstimator(seed=SEED)  # __init__()
+
+    """
+    FU vqe (classical)
+    FP StatevectorEstimator (quantum) : +1 triggering Entry, +1 Exit (object)
+    """
 
     # Define the cost function for optimization
-    def cost_function(  # 1 Trig ENTRY + 4 ENTRIES for arg
+    def cost_function(
         params, ansatz=qc, hamiltonian=hamiltonian, estimator=estimator
     ) -> float:
 
@@ -53,24 +76,42 @@ def vqe_bare(input_hamiltonian: SparsePauliOp) -> OptimizeResult:
         )
 
         # This is where quantum execution happens (could be extracted)
-        result = estimator.run(  # 1 EXIT method call QC
-            pubs=[pub_estimate],  # 1 EXIT tuple arg CL or QC?
-        ).result()  # 1 EXIT CL
-        energy = result[0].data.evs[0]  # PIN (HOW MANY ENTRIES)
-        return energy  # 1 EXIT to whoever called
+        result = estimator.run(
+            pubs=[pub_estimate],
+        ).result()
+        """
+        FU cost_function (classical)
+        FP statevector_estimator.run() (quantum) : +1 Triggering Entry, +1 Entry for argument, +1 Exit for PrimitiveJob
+
+        --------------------------------------------------------
+        
+        FU cost_function (classical)
+        FP PrimitiveJob.result() (quantum) : +1 Triggering Entry, +1 Exit for PrimitiveResult        
+        """
+
+        energy = result[0].data.evs[0]
+        return energy
 
     # Run the optimization
-    initial_params = np.random.RandomState(seed=SEED).rand(len(params))
-    # 1 EXIT RandomState __init__(1 EXIT arg)
-    # 1 EXIT len( 1 EXIT arg)
-    # 1 EXIT rand()
+    initial_params = RandomState(seed=SEED).rand(len(params))
+    """
+    FU vqe
 
-    optimization_result = minimize(  # 1 EXIT
-        cost_function,  # 1 EXIT
-        x0=initial_params,  # 1 EXIT
-        args=(qc),  # 1 EXIT
-        method="SLSQP",  # 1 EXIT
-        options={"maxiter": 1000},  # 1 EXIT
+    FP RandomState.rand() (quantum) : +1 Triggering Entry, +2 Entries for arguments, +2 Exits for values of parameters
+
+    Total : 5
+    """
+
+    optimization_result = minimize(
+        cost_function,
+        x0=initial_params,
+        args=(qc),
+        method="SLSQP",
+        options={"maxiter": 1000},
     )
+    """
+    FU vqe (classical)
+    FP minimize (classical) : + 1 Triggering Entry, +5 Entries for arguments, +1 Exit for OptimizeResult
+    """
 
-    return optimization_result  # 1 EXIT of vqe_bare()
+    return optimization_result  # 1 EXIT of vqe()
