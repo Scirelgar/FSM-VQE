@@ -14,7 +14,7 @@
 \texttt{main} & \texttt{vqe} & +1 Triggering EXIT, +1 EXIT for the argument, +1 ENTRY for the object OptimizeResult & 3 \\ \hline
 
 % FP vqe
-\texttt{vqe} & \texttt{main} & +1 Triggering Entry, +1 Entry for the argument, +1 Exit for the object OptimizeResult & 3 \\ \hline
+\texttt{vqe} & \texttt{main} & +1 Triggering ENTRY, +1 ENTRY for the argument, +1 EXIT for the object OptimizeResult & 3 \\ \hline
 \texttt{vqe} & \texttt{QuantumCircuit.\_\_init\_\_()} & +1 Triggering EXIT, +1 EXIT for the argument, +1 ENTRY for the object QuantumCircuit & 3 \\ \hline
 \texttt{vqe} & \texttt{params} & +1 Triggering EXIT, +1 EXIT for the argument, +1 ENTRY for the object params & 3 \\ \hline
 \texttt{vqe} & \texttt{RX} & +1 Triggering EXIT, +2 EXIT for the argument & 3 \\ \hline
@@ -26,30 +26,30 @@
 \texttt{vqe} & \texttt{minimize} & +1 Triggering EXIT, +5 EXIT for the arguments, +1 ENTRY for the object OptimizeResult & 7 \\ \hline
 
 % FP QuantumCircuit
-\texttt{QuantumCircuit} & \texttt{vqe} & +1 Triggering Entry, +1 Entry for the argument, +1 Exit for the object QuantumCircuit & 3 \\ \hline
-\texttt{QuantumCircuit} & \texttt{RX} & +1 Entry & 1 \\ \hline
-\texttt{QuantumCircuit} & \texttt{RZ} & +1 Entry & 1 \\ \hline
+\texttt{QuantumCircuit} & \texttt{vqe} & +1 Triggering ENTRY, +1 ENTRY for the argument, +1 EXIT for the object QuantumCircuit & 3 \\ \hline
+\texttt{QuantumCircuit} & \texttt{RX} & +1 ENTRY & 1 \\ \hline
+\texttt{QuantumCircuit} & \texttt{RZ} & +1 ENTRY & 1 \\ \hline
 
 % FP params
-\texttt{params} & \texttt{vqe} & +1 Triggering Entry coming from vqe, +1 Entry for arguments, +1 Exits going back to vqe & 3 \\ \hline
+\texttt{params} & \texttt{vqe} & +1 Triggering ENTRY coming from vqe, +1 ENTRY for arguments, +1 EXIT going back to vqe & 3 \\ \hline
 
 % FP RX
-\texttt{RX} & \texttt{vqe} and \texttt{QuantumCircuit} & +2 Entries for arguments, +1 Triggering Entry, +1 Exit towards qc & 4 \\ \hline
+\texttt{RX} & \texttt{vqe} and \texttt{QuantumCircuit} & +2 Entries for arguments, +1 Triggering ENTRY, +1 EXIT towards qc & 4 \\ \hline
 
 % FP RZ
-\texttt{RZ} & \texttt{vqe} and \texttt{QuantumCircuit} & +2 Entries for argument, +1 Triggering Entry, 1 Exit towards qc & 4 \\ \hline
+\texttt{RZ} & \texttt{vqe} and \texttt{QuantumCircuit} & +2 Entries for argument, +1 Triggering ENTRY, 1 EXIT towards qc & 4 \\ \hline
 
 % FP StatevectorEstimator.__init__()
-\texttt{StatevectorEstimator.\_\_init\_\_()} & \texttt{vqe} & +1 triggering Entry, +1 Exit (object) & 2 \\ \hline
+\texttt{StatevectorEstimator.\_\_init\_\_()} & \texttt{vqe} & +1 triggering ENTRY, +1 EXIT (object) & 2 \\ \hline
 
 % FP RandomState.__init__()
-\texttt{RandomState.\_\_init\_\_()} & \texttt{vqe} & +1 Triggering Entry, +1 Exit (object) & 2 \\ \hline
+\texttt{RandomState.\_\_init\_\_()} & \texttt{vqe} & +1 Triggering ENTRY, +1 EXIT (object) & 2 \\ \hline
 
 % FP RandomState.rand()
-\texttt{RandomState.rand()} & \texttt{vqe} & +1 Triggering Entry, +1 Entry for argument, +1 Exit for values & 3 \\ \hline
+\texttt{RandomState.rand()} & \texttt{vqe} & +1 Triggering ENTRY, +1 ENTRY for argument, +1 EXIT for values & 3 \\ \hline
 
 % FP len()
-\texttt{len()} & \texttt{vqe} & +1 Triggering Entry, +1 Entry for argument, +1 Exit for integer value & 3 \\ \hline
+\texttt{len()} & \texttt{vqe} & +1 Triggering ENTRY, +1 ENTRY for argument, +1 EXIT for integer value & 3 \\ \hline
 
 % FP cost_function
 \texttt{cost\_function} & \texttt{minimize} & +1 Triggering ENTRY, +4 ENTRIES for arguments, +1 EXIT for function value & 6 \\ \hline
@@ -63,7 +63,7 @@
 \texttt{PrimitiveJob.result()} & \texttt{cost\_function} & +1 Triggering ENTRY, +1 EXIT for PrimitiveResult & 2 \\ \hline
 
 % FP minimize
-\texttt{minimize} & \texttt{vqe} & + 1 Triggering Entry, +5 Entries for arguments, +1 Exit for OptimizeResult & 7 \\ \hline
+\texttt{minimize} & \texttt{vqe} & + 1 Triggering ENTRY, +5 ENTRIES for arguments, +1 EXIT for OptimizeResult & 7 \\ \hline
 \texttt{minimize} & \texttt{cost\_function} & +1 Triggering EXIT, +4 EXITs for arguments, +1 ENTRY for function value & 6 \\ \hline
 
 
