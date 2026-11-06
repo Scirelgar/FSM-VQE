@@ -1,3 +1,9 @@
+"""Implement the high-level Qiskit VQE variant used for FSM comparison.
+
+This variant delegates ansatz optimization to ``qiskit_algorithms.VQE`` while
+preserving the functional boundary that begins with a supplied Hamiltonian.
+"""
+
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
@@ -35,6 +41,7 @@ def _x0_parameters(n_qubits) -> np.ndarray:
     return params
 
 
+# TODO: Decide whether the functional interface should return only the estimated ground-state energy.
 def vqe_subroutine(input_hamiltonian: SparsePauliOp) -> VQEResult:
     """Run the Qiskit VQE algorithm for a supplied Hamiltonian using the ``qiskit_algorithms`` module.
 

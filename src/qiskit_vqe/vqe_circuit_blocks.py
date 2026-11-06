@@ -1,3 +1,10 @@
+"""Implement an explicit-block VQE variant used for FSM comparison.
+
+This variant combines a library-provided Hamiltonian variational ansatz with an
+explicit cost function and classical optimization loop. Its functional boundary
+begins when a caller supplies the Hamiltonian.
+"""
+
 import numpy as np
 from qiskit.circuit.library import hamiltonian_variational_ansatz
 from qiskit.quantum_info import SparsePauliOp
@@ -34,6 +41,7 @@ def _cost_function(params, ansatz, hamiltonian, estimator) -> float:
     return energy
 
 
+# TODO: Decide whether the functional interface should return only the estimated ground-state energy.
 def vqe(input_hamiltonian: SparsePauliOp) -> OptimizeResult:
     """Run a classical optimization loop over a VQE cost function for a supplied Hamiltonian.
 

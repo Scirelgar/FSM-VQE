@@ -1,1 +1,1 @@
-"""Legacy VQE implementations retained for reference."""
+"""Preserve the original manually assembled VQE measurement baseline."""

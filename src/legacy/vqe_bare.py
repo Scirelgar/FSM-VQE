@@ -1,3 +1,10 @@
+"""Implement the original manually assembled VQE baseline.
+
+The module retains the first project iteration, in which the ansatz and hybrid
+optimization workflow were built directly for functional size measurement. It
+remains a comparison subject even though it lives in the ``legacy`` package.
+"""
+
 from numpy.random import RandomState
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
@@ -8,6 +15,7 @@ from scipy.optimize import minimize, OptimizeResult
 SEED = 156
 
 
+# TODO: Decide whether the functional interface should return only the estimated ground-state energy.
 def vqe(
     input_hamiltonian: SparsePauliOp,
 ) -> OptimizeResult:  # +1 Triggering Entry, +1 Entry for the argument
