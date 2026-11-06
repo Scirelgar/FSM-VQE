@@ -1,5 +1,5 @@
 from hamiltonian import Hamiltonian
-import vqe_bare
+import vqe_circuit_blocks as vqe
 
 
 def main(hamiltonian: Hamiltonian = Hamiltonian.H2_STO6G_REDUX):
@@ -15,7 +15,7 @@ def main(hamiltonian: Hamiltonian = Hamiltonian.H2_STO6G_REDUX):
         >>> main()
     """
 
-    vqe_result = vqe_bare.vqe(
+    vqe_result = vqe.vqe(
         hamiltonian.value
     )  # Data movement with vqe(): +1 Entry for OptimizeResult, +1 Exit Hamiltonian, +1 Exit triggering vqe()
     print(vqe_result)

@@ -1,6 +1,5 @@
 import numpy as np
-from qiskit import QuantumCircuit
-from qiskit.circuit import Parameter
+from qiskit.circuit.library import hamiltonian_variational_ansatz
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.primitives import StatevectorEstimator
 from scipy.optimize import minimize, OptimizeResult
@@ -35,19 +34,6 @@ def _cost_function(params, ansatz, hamiltonian, estimator) -> float:
     return energy
 
 
-def _build_1qubit_local_ansatz() -> QuantumCircuit:
-    """Build a 1-qubit local ansatz.
-
-    Returns:
-        QuantumCircuit: Single-qubit variational circuit with ``rx`` and ``rz`` rotations.
-    """
-    ansatz = QuantumCircuit(1)
-    ansatz.rx(Parameter("theta"), 0)
-    ansatz.rz(Parameter("phi"), 0)
-
-    return ansatz
-
-
 def _x0_parameters(n_qubits) -> np.ndarray:
     """Generate deterministic initial parameters for the optimizer.
 
@@ -61,7 +47,7 @@ def _x0_parameters(n_qubits) -> np.ndarray:
     return params
 
 
-def vqe_circuit_builder(input_hamiltonian: SparsePauliOp) -> OptimizeResult:
+def vqe(input_hamiltonian: SparsePauliOp) -> OptimizeResult:
     """Run a classical optimization loop over a VQE cost function for a supplied Hamiltonian.
 
     Args:
@@ -72,21 +58,20 @@ def vqe_circuit_builder(input_hamiltonian: SparsePauliOp) -> OptimizeResult:
 
     Example:
         >>> from hamiltonian import Hamiltonian
-        >>> result = vqe_circuit_builder(Hamiltonian.H2_STO6G_REDUX.value)
+        >>> result = vqe(Hamiltonian.H2_STO6G_REDUX.value)
     """
 
-    hamiltonian = input_hamiltonian
-    ansatz = _build_1qubit_local_ansatz()
+    ansatz = hamiltonian_variational_ansatz(input_hamiltonian)
     estimator = StatevectorEstimator()
 
-    x0 = _x0_parameters(ansatz.num_parameters)
+    x0 = np.random.RandomState(seed=SEED).random(ansatz.num_parameters)
 
     result = minimize(
         _cost_function,
         x0=x0,
         args=(
             ansatz,
-            hamiltonian,
+            input_hamiltonian,
             estimator,
         ),
         method="SLSQP",
