@@ -1,5 +1,5 @@
 from hamiltonian import Hamiltonian
-import vqe_circuit_blocks as vqe
+from qiskit_vqe import vqe_circuit_blocks as vqe
 
 
 def main(hamiltonian: Hamiltonian = Hamiltonian.H2_STO6G_REDUX):

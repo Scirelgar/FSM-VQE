@@ -34,19 +34,6 @@ def _cost_function(params, ansatz, hamiltonian, estimator) -> float:
     return energy
 
 
-def _x0_parameters(n_qubits) -> np.ndarray:
-    """Generate deterministic initial parameters for the optimizer.
-
-    Args:
-        n_qubits: Number of parameters to generate.
-
-    Returns:
-        np.ndarray: Seeded random initial parameter vector.
-    """
-    params = np.random.RandomState(seed=SEED).random(n_qubits)
-    return params
-
-
 def vqe(input_hamiltonian: SparsePauliOp) -> OptimizeResult:
     """Run a classical optimization loop over a VQE cost function for a supplied Hamiltonian.
 
